@@ -19,11 +19,11 @@ import NotificationsIcon from '@material-ui/icons/Notifications';
 import DateViewer from './DateViewer';
 import { secondaryListItems, mainListItems } from './ListItems'
 import People from './People';
-import Calculator from './Calculator';
 import Todos from './Todos';
 import Notice from './Notice';
 import RecordWork from './RecordWork';
 import { saveAs } from 'file-saver'
+import ComplexCals from './ComplexCals';
 
 function Footer(props) {
     return (
@@ -272,7 +272,10 @@ const DashboardContent = () => {
             >
                 <Toolbar />
                 <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
-                    {pageState === 'dashboard' ? MainDashboard(date, setDate, dataRel, peopleDataRel) : pageState === 'people' ? <People data={peopleDataRel} readonly={false}/> : pageState === 'calculator' ? <Calculator /> : pageState === 'todos' ? <Todos data={dataRel} readonly={false} /> 
+                    {pageState === 'dashboard' ? MainDashboard(date, setDate, dataRel, peopleDataRel) 
+                    : pageState === 'people' ? <People data={peopleDataRel} readonly={false}/> 
+                    : pageState === 'calculator' ? <ComplexCals />
+                    : pageState === 'todos' ? <Todos data={dataRel} readonly={false} /> 
                     : pageState === 'notice' ? <Notice /> 
                     : pageState === 'addem' ? <RecordWork data={peopleDataRel}/> :'Nothing ever happens'}
                     <Footer sx={{ pt: 4 }} />
