@@ -1,25 +1,12 @@
-# Create React App example
+# SWAY
 
-## How to use
+> Simple Workbook App for You
 
-Download the example [or clone the repo](https://github.com/mui-org/material-ui):
+> 제작중
 
-```sh
-curl https://codeload.github.com/mui-org/material-ui/tar.gz/master | tar -xz --strip=2 material-ui-master/examples/create-react-app
-cd create-react-app
-```
+## 기능
 
-Install it and run:
-
-```sh
-npm install
-npm start
-```
-
-or:
-
-[![Edit on CodeSandbox](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/s/github/mui-org/material-ui/tree/master/examples/create-react-app)
-
-## The idea behind the example
-
-This example demonstrates how you can use [Create React App](https://github.com/facebookincubator/create-react-app).
+- 임금계산기
+- 직원관리
+- 근무일지
+- 장부
