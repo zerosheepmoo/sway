@@ -5,6 +5,7 @@ import Paper from '@material-ui/core/Paper';
 import Box from '@material-ui/core/Box';
 import TextField from '@material-ui/core/TextField';
 import { DataGrid } from '@material-ui/data-grid';
+import NothingCon from './NothingCon';
 
 const AddPerson = (props) => {
     const [name, setName] = useState('');
@@ -17,7 +18,7 @@ const AddPerson = (props) => {
         setName('');
         setAge(0);
     }
-    
+
     return (
         <Box
             component="form"
@@ -59,26 +60,26 @@ const AddPerson = (props) => {
     )
 }
 
-const columns = [
+const createColumns = (date) => [
     { field: 'id', headerName: 'ID', width: 110 },
-    { field: 'name', headerName: 'Name', width: 130 },
+    { field: 'name', headerName: '이름', width: 130 },
     {
       field: 'age',
-      headerName: 'Age',
+      headerName: '나이',
       type: 'number',
       width: 150,
     },
     {
-      field: 'todaysWork',
-      headerName: 'Today Work Hours',
+      field: 'twh',
+      headerName: `${date} 일한 시간`,
       type: 'number',
-      width: 210,
+      width: 250,
     }
 ]
 
 const PeopleTable = (props) => {
     return (<div style={{ height: 400, width: '100%' }}>
-      <DataGrid rows={props.rows} columns={columns} checkboxSelection onSelectionModelChange={sModel => {
+      <DataGrid rows={props.rows} columns={props.columns} checkboxSelection onSelectionModelChange={sModel => {
           props.setSelected(sModel);
       }}/>
     </div>)
@@ -112,20 +113,31 @@ const People = (props) => {
             alert('똑같은 사람이 있습니다! 동명이인일 경우 (2)를 붙이는 등 다르게 표시해주세요');
             return;
         }
-        people.push({name: name, age: age || NaN});
+        people.push({name: name, age: age});
         setPeople({ list: people, workRecord: workRecord});
     }
 
-    // 사람 삭제
     const deletePerson = (idx, name) => {
         people.splice(idx, 1);
-        for (let date in workRecord) {
-            const exists = workRecord[date][name];
-            if (exists) {
-                delete workRecord[date];
-            }
-        }
+        // for (let date in workRecord) {
+        //     const exists = workRecord[date][name];
+        //     if (exists) {
+        //         delete workRecord[date][name];
+        //     }
+        // }
         setPeople({ list: people,  workRecord});
+    }
+
+    const caltwh = (name) => {
+        if (!workRecord[selectedDay] || !workRecord[selectedDay][name]) {
+            return;
+        }
+        const tws = workRecord[selectedDay][name];
+        let twh = 0;
+        for (let work in tws) {
+            twh += Number(tws[work]);
+        }
+        return twh || undefined;
     }
 
     const createNewRows = () => {
@@ -134,7 +146,7 @@ const People = (props) => {
             const name = people[i].name;
             const age = Number(people[i].age);
             const id = i;
-            const twh = workRecord[selectedDay][name] ?? 0;
+            const twh = caltwh(name);
             const row = {id, name, age, twh}
             newRows.push(row);
         }
@@ -147,34 +159,49 @@ const People = (props) => {
         }
     }, [date])
 
-
     return (
         <Paper
+            elevation={3}
             sx={readonly ? {
-                p: 2,
+                p: 4,
                 display: 'flex',
                 flexDirection: 'column',
-                height: 400,
                 overflow: 'scroll',
                 position: 'relative',
-                marginTop: 3
-            } : { height: '80vh', padding: '20px', overflow: 'scroll', position: 'relative' }}>
-            <Typography variant={readonly ? "h5" : "h2"} color="primary" align="center">
+                marginTop: 3,
+                flex: '1',
+                backgroundColor: props.bgColor || undefined
+            } : { 
+                height: '80vh', 
+                padding: '20px', 
+                overflow: 'scroll', 
+                position: 'relative' 
+                }}
+                hidden={props.hidden}
+            >
+            <Typography
+                variant={readonly ? "h5" : "h2"}
+                color="primary"
+                align="center"
+                >
                 {readonly ? selectedDay + ' 일한 직원' : '직원목록'}
             </Typography>
 
             {!readonly ? <AddPerson submit={addPerson} /> : <></>}
-            {!readonly ? <>
-            <Button onClick={(e) => {
-                for (let i = selected.length -1; i > -1; i--) {
-                    deletePerson(selected[i], people[i].name);
-                }
-            }}>선택직원 삭제하기</Button>
-            <PeopleTable rows={createNewRows()} setSelected={setSelected}/>
+            {!readonly 
+                ? <>
+                <Button onClick={(e) => {
+                    for (let i = selected.length -1; i > -1; i--) {
+                        deletePerson(selected[i], people[i].name);
+                    }
+                }}>선택직원 삭제하기</Button>
+                <PeopleTable rows={createNewRows()} columns={createColumns(`${date.getFullYear()}-${date.getMonth()+1}-${date.getDate()}`)} setSelected={setSelected}/>
             </>
                 : workRecord[selectedDay] && Object.keys(workRecord[selectedDay]).length > 0
-                ? Object.keys(workRecord[selectedDay]).maps(personName => <Paper><Typography variant='h3'>{personName}{': '}{workRecord[selectedDay][personName] ?? 0}</Typography></Paper>)
-                : <Typography variant={readonly ? "h6" : "h3"} sx={{ paddingLeft: 2, marginTop: 5 }}>없음</Typography>}
+                ? Object.keys(workRecord[selectedDay]).map(personName => <Paper key={personName} sx={{p: 1, mt: 2, textAlign: 'center'}}>
+                    <Typography variant='h5' role="body1">{personName}{': '}{caltwh(personName)}{'시간'}</Typography>
+                    </Paper>)
+                : <NothingCon readonly={readonly}/> }
         </Paper >
     )
 }

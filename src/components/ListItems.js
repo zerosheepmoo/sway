@@ -6,17 +6,16 @@ import ListSubheader from '@material-ui/core/ListSubheader';
 import DashboardIcon from '@material-ui/icons/Dashboard';
 import PeopleIcon from '@material-ui/icons/People';
 import CalculateIcon from '@material-ui/icons/Calculate';
-import SaveIcon from '@material-ui/icons/Save';
+import AccountBalanceWalletIcon from '@material-ui/icons/AccountBalanceWallet';;
 import SaveAltIcon from '@material-ui/icons/SaveAlt';
 import AssignmentInd from '@material-ui/icons/AssignmentInd';
 import Assignment from '@material-ui/icons/Assignment';
 import Delete from '@material-ui/icons/Delete';
 import UploadFile from '@material-ui/icons/UploadFile';
-import Recommend from '@material-ui/icons/Recommend';
 
 export const mainListItems = (dispatch) => (
   <div>
-    <ListItem button onClick={(e) => {e.preventDefault();dispatch('dashboard')}}>
+    <ListItem button onClick={() => {dispatch('dashboard')}}>
       <ListItemIcon>
         <DashboardIcon />
       </ListItemIcon>
@@ -26,13 +25,13 @@ export const mainListItems = (dispatch) => (
       <ListItemIcon>
         <PeopleIcon />
       </ListItemIcon>
-      <ListItemText primary="작원관리" />
+      <ListItemText primary="직원관리" />
     </ListItem>
-    <ListItem button onClick={() => dispatch('addem')}>
+    <ListItem button onClick={() => dispatch('acc')}>
       <ListItemIcon>
-        <Recommend />
+        <AccountBalanceWalletIcon />
       </ListItemIcon>
-      <ListItemText primary="일한 시간 기록" />
+      <ListItemText primary="장부" />
     </ListItem>
     <ListItem button onClick={() => dispatch('calculator')}>
       <ListItemIcon>

@@ -1,11 +1,23 @@
 import React from 'react';
 import Dashboard from './components/Dashboard';
+import AdapterDateFns from '@material-ui/lab/AdapterDateFns';
+import LocalizationProvider from '@material-ui/lab/LocalizationProvider';
+import koLocale from 'date-fns/locale/ko';
 
 export default function App() {
-  return (
-      <div>
+  const [locale, setLocale] = React.useState('ko');
 
-        <Dashboard/>
-      </div>
+
+  const localeMap = {
+    ko: koLocale
+  }
+
+  return (
+    <div>
+
+      <LocalizationProvider dateAdapter={AdapterDateFns} locale={localeMap[locale]}>
+        <Dashboard />
+      </LocalizationProvider>
+    </div>
   );
 }

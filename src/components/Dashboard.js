@@ -12,23 +12,23 @@ import IconButton from '@material-ui/core/IconButton';
 import Badge from '@material-ui/core/Badge';
 import Container from '@material-ui/core/Container';
 import Grid from '@material-ui/core/Grid';
-import Paper from '@material-ui/core/Paper';
 import MenuIcon from '@material-ui/icons/Menu';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import NotificationsIcon from '@material-ui/icons/Notifications';
 import DateViewer from './DateViewer';
-import { secondaryListItems, mainListItems } from './ListItems'
+import { secondaryListItems, mainListItems } from './ListItems';
 import People from './People';
 import Todos from './Todos';
 import Notice from './Notice';
-import RecordWork from './RecordWork';
 import { saveAs } from 'file-saver'
 import ComplexCals from './ComplexCals';
+import Employees from './Employees';
+import AccountBook from './AccountBook';
 
 function Footer(props) {
     return (
         <Typography variant="body2" color="text.secondary" align="center" {...props}>
-            {'Simple Workbook Application for You, Last updated: 2021-09-01'}
+            {'Simple Workbook Application for You, Last updated: 2021-09-05'}
         </Typography>
     );
 }
@@ -83,11 +83,20 @@ const MainDashboard = (date, setDate, data, peopleData) => (
 
     <Grid container spacing={3}>
         {/* DatePicker */}
-        <Grid item xs={12} md={6} lg={6} >
-            <DateViewer date={{ val: date, dispatch: setDate }} />
+        <Grid 
+        item container 
+        flexDirection='column'
+        xs={12} md={6} lg={6} 
+        >
+            <DateViewer date={{ val: date, dispatch: setDate }} sx={{ height: '100%' }} />
         </Grid>
+
         {/* Todos */}
-        <Grid item xs={12} md={6} lg={6}>
+        <Grid 
+            item container 
+            flexDirection='column' 
+            justifyContent='space-between'
+            xs={12} md={6} lg={6} >
             <Todos data={data} readonly={true} />
             <People data={peopleData} readonly={true}/>
         </Grid>
@@ -136,7 +145,9 @@ const DashboardContent = () => {
     };
 
     const deleteData = () => {
-        setTodos({});
+        if (confirm("정말로 삭제하시겠습니까? 삭제된 데이터는 더 이상 복구할 수 없습니다.")) {
+            setTodos({});
+        }
     }
 
     const exportData = () => {
@@ -190,6 +201,7 @@ const DashboardContent = () => {
         workRecord: people.workRecord,
         setPeople,
         date,
+        setDate,
         export: exportPeopleData,
         upload: loadPeopleData
     }
@@ -209,7 +221,7 @@ const DashboardContent = () => {
             <AppBar position="absolute" open={open}>
                 <Toolbar
                     sx={{
-                        pr: '24px', // keep right padding when drawer closed
+                        pr: '24px', 
                     }}
                 >
                     <IconButton
@@ -231,7 +243,7 @@ const DashboardContent = () => {
                         noWrap
                         sx={{ flexGrow: 1 }}
                     >
-                        SWAY
+                        당신을 위한 미니멀 워크북 앱, SWAY
                     </Typography>
                     <IconButton color="inherit" onClick={() => { alert('장식입니다!'); setNotifiCount(0) }}>
                         <Badge badgeContent={notifiCount} color="secondary" >
@@ -240,6 +252,7 @@ const DashboardContent = () => {
                     </IconButton>
                 </Toolbar>
             </AppBar>
+
             <Drawer variant="permanent" open={open}>
                 <Toolbar
                     sx={{
@@ -258,6 +271,7 @@ const DashboardContent = () => {
                 <Divider />
                 <List> {secondaryListItems(dataRel, peopleDataRel)}</List>
             </Drawer>
+
             <Box
                 component="main"
                 sx={{
@@ -273,11 +287,12 @@ const DashboardContent = () => {
                 <Toolbar />
                 <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
                     {pageState === 'dashboard' ? MainDashboard(date, setDate, dataRel, peopleDataRel) 
-                    : pageState === 'people' ? <People data={peopleDataRel} readonly={false}/> 
-                    : pageState === 'calculator' ? <ComplexCals />
-                    : pageState === 'todos' ? <Todos data={dataRel} readonly={false} /> 
+                    : pageState === 'people' ? <Employees data={peopleDataRel}/>
+                    : pageState === 'calculator' ? <ComplexCals data={peopleDataRel}/>
+                    : pageState === 'todos' ? <Todos data={dataRel} people={people.list} readonly={false} /> 
                     : pageState === 'notice' ? <Notice /> 
-                    : pageState === 'addem' ? <RecordWork data={peopleDataRel}/> :'Nothing ever happens'}
+                    : pageState === 'acc' ? <AccountBook/>
+                    :'Nothing ever happens'}
                     <Footer sx={{ pt: 4 }} />
                 </Container>
             </Box>

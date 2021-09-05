@@ -1,24 +1,13 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { styled } from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField';
-// import Grid from '@material-ui/core/Grid';
 import Paper from '@material-ui/core/Paper';
 import Stack from '@material-ui/core/Stack';
 import Box from '@material-ui/core/Box';
-import AdapterDateFns from '@material-ui/lab/AdapterDateFns';
-import LocalizationProvider from '@material-ui/lab/LocalizationProvider';
 import StaticDatePicker from '@material-ui/lab/StaticDatePicker';
-import MonthPicker from '@material-ui/lab/MonthPicker';
-import YearPicker from '@material-ui/lab/YearPicker';
+import DateViewerTools from './DateViewerTools';
 
-import koLocale from 'date-fns/locale/ko';
-
-const localeMap = {
-    ko: koLocale
-}
-
-const minDate = new Date('2020-01-01T00:00:00.000');
-const maxDate = new Date('2034-01-01T00:00:00.000');
+const toolModes = ['반갑습니다', '월 선택기', '연 선택기'];
 
 const Item = styled(Paper)(({ theme }) => ({
     ...theme.typography.body2,
@@ -29,50 +18,43 @@ const Item = styled(Paper)(({ theme }) => ({
 
 const DateViewer = (props) => {
 
-    // TODO multi lang
-    const [locale, setLocale] = React.useState('ko');
-    const date = props.date.val
-    const setDate = props.date.dispatch
+    const date = props.date.val;
+    const setDate = props.date.dispatch;
+    const [toolMode, setToolMode] = useState(toolModes[0]);
+    const orientation = props.ori ?? 'portrait';
+    const notTool = props.notTool;
+
+    const goToolLeft = () => {
+        const idx = toolModes.indexOf(toolMode);
+        idx === 0 ? setToolMode(toolModes[toolModes.length - 1]) : setToolMode(toolModes[idx - 1]);
+    }
+
+    const goToolRight = () => {
+        const idx = toolModes.indexOf(toolMode);
+        idx === toolModes.length - 1 ? setToolMode(toolModes[0]) : setToolMode(toolModes[idx + 1]);
+    }
 
     return (
-        <LocalizationProvider dateAdapter={AdapterDateFns} locale={localeMap[locale]}>
-            <Box >
-                <Stack spacing={3}>
-                    <Item elevation={3}>
-                        <StaticDatePicker
-                            orientation="portrait"
-                            toolbarTitle="날짜를 선택하세요."
-                            toolbarFormat="yyyy-MM-dd"
-                            openTo="day"
-                            value={date}
-                            onChange={(newDate) => {
-                                setDate(newDate)
-                            }}
-                            renderInput={(params) => <TextField {...params} />}
-                        />
-
-                    </Item>
-                    <Item elevation={3}>
-                        <MonthPicker
-                            date={date}
-                            minDate={minDate}
-                            maxDate={maxDate}
-                            onChange={(newDate) => setDate(newDate)}
-                            sx={{ width: '100%' }}
-                        />
-                    </Item>
-                    <Item elevation={3}>
-                        <YearPicker styles={{ width: '100%' }}
-                            date={date}
-                            isDateDisabled={() => false}
-                            minDate={minDate}
-                            maxDate={maxDate}
-                            onChange={(newDate) => setDate(newDate)}
-                        />
-                    </Item>
-                </Stack>
-            </Box>
-        </LocalizationProvider>
+        <Stack sx={props.sx} spacing={3}>
+            {
+                !notTool && <Item elevation={3}>
+                    <DateViewerTools date={date} setDate={setDate} mode={toolMode} goLeft={goToolLeft} goRight={goToolRight} />
+                </Item>
+            }
+            <Item elevation={3} sx={{ height: notTool ? 'default' : '100%' }}>
+                <StaticDatePicker
+                    orientation={orientation}
+                    toolbarTitle="날짜를 선택하세요."
+                    toolbarFormat="yyyy-MM-dd"
+                    openTo="day"
+                    value={date}
+                    onChange={(newDate) => {
+                        setDate(newDate)
+                    }}
+                    renderInput={(params) => <TextField {...params} />}
+                />
+            </Item>
+        </Stack>
     );
 }
 

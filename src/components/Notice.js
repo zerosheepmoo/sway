@@ -4,7 +4,7 @@ import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
 
 const Notice = () =>
-(<Paper sx={{ padding: 5 }}>
+(<Paper elevation={3} sx={{ padding: 5 }}>
     
     <Typography variant="h4" role="h3" color="primary" sx={{ paddingBottom: 3 }}>엑셀파일로 변환하기</Typography>
     <Typography variant="body1" sx={{ paddingBottom: 2 }}>
@@ -23,12 +23,16 @@ const Notice = () =>
     </Typography>
 
     <Typography variant="h4" role="h3" color="primary" sx={{ paddingBottom: 3 }}>주의사항</Typography>
-    <Typography variant="body1" sx={{ paddingBottom: 2 }}>
+    <Typography variant="body1">
         SWAY는 <Link href="https://developer.mozilla.org/en-US/docs/Web/API/Window/localStorage">localStorage</Link> 기술을 사용합니다. 보안에 민감한 정보들은 되도록 기입하지 않기를 권장합니다.
     </Typography>
     <Typography variant="body1" sx={{ paddingBottom: 2 }}>
         이 앱의 제작자는 이 앱을 사용해서 발생한 피해에 대해서 어떠한 책임도 지지 않습니다.
     </Typography>
+
+    <Typography variant="h5" color="primary">favicon 출처</Typography>
+    <img src="/sway/android-icon-192x192.png" width="100px;" height="100px;"/>
+    <div>Icons made by <a href="https://www.freepik.com" title="Freepik">Freepik</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a></div>
 </Paper>
 )
 

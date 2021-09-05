@@ -1,14 +1,13 @@
 import React, { useState } from 'react';
-import { useTheme } from '@material-ui/core/styles';
-import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
 import TextField from '@material-ui/core/TextField';
 import Paper from '@material-ui/core/Paper';
 import Box from '@material-ui/core/Box';
-import Select from '@material-ui/core/Select';
-import MenuItem from '@material-ui/core/MenuItem';
-import InputLabel from '@material-ui/core/InputLabel';
-import OutlinedInput from '@material-ui/core/OutlinedInput';
+import Button from '@material-ui/core/Button';
+import PeopleSelect from './PeopleMultiSelect';
+import DateViewer from './DateViewer';
+import Grid from '@material-ui/core/Grid';
+import People from './People';
 
 
 const RecordWork = (props) => {
@@ -16,86 +15,86 @@ const RecordWork = (props) => {
     const workRecord = props.data.workRecord;
     const setPeople = props.data.setPeople;
     const date = props.data.date;
+    const setDate = props.data.setDate;
 
     const [wHours, setWHours] = useState(0);
-    const [personName, setPersonName] = useState([]);
+    const [work, setWork] = useState('기본 업무');
+    const [peopleName, setPeopleName] = useState([]);;
 
-    const theme = useTheme();
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        const formatted = `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`;
+        const newWRecord = {};
 
-    const ITEM_HEIGHT = 48;
-    const ITEM_PADDING_TOP = 8;
-    const MenuProps = {
-        PaperProps: {
-            style: {
-                maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
-                width: 250,
-            },
-        },
-    };
-
-    function getStyles(name, personName, theme) {
-        return {
-            fontWeight:
-                personName.indexOf(name) === -1
-                    ? theme.typography.fontWeightRegular
-                    : theme.typography.fontWeightMedium,
-        };
+        if (workRecord[formatted]) {
+            newWRecord[formatted] = workRecord[formatted];
+        }
+        else {
+            newWRecord[formatted] = {};
+        }
+        for (let i = 0; i < peopleName.length; i++) {
+            if (newWRecord[formatted][peopleName[i]]) {
+                newWRecord[formatted][peopleName[i]][work] = wHours;
+            }
+            else {
+                newWRecord[formatted][peopleName[i]] = {[work]: wHours};
+            }
+        }
+        const newData = {
+            list: list, workRecord: {...workRecord, ...newWRecord}
+        }
+        
+        setPeople(newData);
     }
-
-    const handleChange = (event) => {
-        const {
-            target: { value },
-        } = event;
-        setPersonName(
-            typeof value === 'string' ? value.split(',') : value,
-        );
-    };
-
 
     return (
         <Paper sx={{
             height: '80vh',
             padding: '20px',
             overflow: 'scroll'
-        }}>
-            <Typography variant="h2">
-                일한 시간 기록하기
-            </Typography>
-            <Box
-                component="form"
-                sx={{
-                    display: 'flex',
-                    justifyContent: 'space-around',
-                    margin: 2,
-                    width: '100%'
-                }}
-                noValidate
-                autoComplete="off"
-            >
-                <Select
-                    label="직원명"
-                    multiple
-                    value={personName}
-                    onChange={handleChange}
-                    input={<OutlinedInput sx={{width: '90%'}} label="Name" />}
-                    MenuProps={MenuProps}
-                    xs={{flex: '0.8'}}
-                >
-                    {list.map((pInfo) => (
-                        <MenuItem
-                            key={pInfo.name}
-                            value={pInfo.name}
-                            xs={getStyles(pInfo.name, personName, theme)}
-                        >
-                            {pInfo.name}
-                        </MenuItem>
-                    ))}
-                </Select>
+        }} 
+        hidden={props.hidden}
+        elevation={3}
+        >
+            <Grid container sx={{ mb: 4, overflow: 'scroll' }}>
+                <Grid item xs={12} md={6} lg={6} sx={{ mb: 3}}>
+                    <DateViewer date={{ val: date, dispatch: setDate }} notTool sx={{ mr: 2, ml: 2.5 }} />
+                </Grid>
 
-                <TextField xs={{ flex: '0.5' }}>
-                    시간 숫자만
-                </TextField>
-            </Box>
+                <Grid item xs={12} md={6} lg={6} >
+                    <Box
+                        component="form"
+                        sx={{
+                            display: 'flex',
+                            justifyContent: 'space-around',
+                            width: '100%',
+                            flexDirection: 'column',
+                        }}
+                        noValidate
+                        autoComplete="off"
+                    >
+                        
+                        <PeopleSelect list={list} ps={peopleName} setPs={setPeopleName} sx={{ mb: 1.5, ml: 1.5, mr: 1.5 }} />
+
+                        <TextField label="업무" required value={work} onChange={(e) => setWork(e.target.value)} sx={{m: 1.5 }} />
+
+                        <TextField type="number" required value={wHours} onChange={(e) => setWHours(e.target.value)} inputProps={{ min: 0, max: 24 }} label="시간" sx={{m: 1.5 }} />
+
+                        <Button
+                            sx={{m: 1.5 }}
+                            type="submit"
+                            variant="contained"
+                            color="primary"
+                            onClick={(e) => handleSubmit(e)}
+                        >
+                            기록
+                        </Button>
+                        <Box sx={{maxHeight: 180, overflow: 'scroll'}}>
+                            <People data={props.data} readonly bgColor='grey.300'/>
+                        </Box>
+                    </Box>
+                </Grid>
+            </Grid>
         </Paper>
     )
 }

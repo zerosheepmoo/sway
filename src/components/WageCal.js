@@ -18,7 +18,7 @@ const WageCal = (props) => {
     }
     return (
         <div hidden={props.hidden}>
-            <Typography variant='h3' role='h2' color='primary' sx={{ marginLeft: 1, paddingTop: 6, paddingBottom: 4 }}> {calculate()} 원</Typography>
+            <Typography variant='h3' role='body1' color='primary' sx={{ marginLeft: 1, paddingTop: 6, paddingBottom: 4 }}> {calculate()} 원</Typography>
             <Typography variant='h6' color='secondary' sx={{ marginLeft: 1 }}>* 2021년 기준 최저시급 8720원</Typography>
             <Box
                 component="form"
